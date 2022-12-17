@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+<style>
+
+
+.phce {
+  perspective: 1000px;
+  position: relative;
+
+  .content{
+    position: relative;
+    overflow: hidden;
+    transform-style: preserve-3d;
+
+    &::before, &::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      transform-style: preserve-3d;
+    }
+    &::before {
+      background-image: var(--bg-image);
+      background-size: cover;
+    }
+    &::after { 
+      background: var(--bg-overlay, none);
+    }
+  }
+  &:hover > .content::before{
+    transform: scale(1.33) translateX(calc(-12.5% * var(--posX,0))) translateY(calc(-12.5% * var(--posY,0)));
+  }
+  // hover effects
+  &:hover > .content { 
+    transform: rotateX(calc(22.5deg * var(--posY,0))) rotateY(calc(-22.5deg * var(--posX,0))) 
+  }
+  &:not(:hover) > .content, &:not(:hover) > .content::before{
+    transition: transform var(--transition-duration, 500ms) var(--transition-timing-function, linear)
+  }
+}
+
+// custom styling
+.card { width: min(30rem, 100%) }
+.card-1{ --bg-image: url("D:\boot\Spicy kitchen\images\pexels-chait-goli-7353380.jpg") }
+.card-2{ --bg-image: url("D:\boot\Spicy kitchen\images\pexels-chait-goli-7353380.jpg") }
+.content{
+  display: grid; 
+  place-items: center;
+  min-height: 16rem;
+  padding: 2rem;
+  border-radius: 1rem;
+  font-family: system-ui, sans-serif;
+  font-size: 2rem;
+  color: white;
+  --bg-overlay: rgb(0 0 0 / .5); 
+}
+
+
+// for demo 
+* { margin: 0; padding: 0; box-sizing: border-box }
+
+body { 
+  display: grid; 
+  place-items: center;
+  gap: 2rem;
+  padding: 2rem; 
+  min-height: 100vh; 
+  background-color: #1D1E22; 
+}
+</style>
+<script>
+
+
+
+const phceEls = document.querySelectorAll(".phce") || [];
+phceEls.forEach(phceEl => phceEl.addEventListener("pointermove", phceSetPositions))
+
+function phceSetPositions({ currentTarget: el, layerX: x, layerY: y }){
+  const { width: w, height: h }  = el.getBoundingClientRect();
+  el.style.setProperty("--posX", phceMapPositions(x, [0, w]));
+  el.style.setProperty("--posY", phceMapPositions(y, [0, h]));   
+}
+
+function phceMapPositions (value, from, to=[-1,1], decimals=2) {
+  const newValue = (value - from[0]) * (to[1] - to[0]) / (from[1] - from[0]) + to[0];
+  const val = Math.min(Math.max(newValue, to[0]) , to[1]);
+  return decimals && decimals > 0 ? Number(Math.round(val+'e'+decimals)+'e-'+decimals) : val;
+}
+    </script>
+</head>
+<body>
+    <div class="phce card card-1">
+        <div class="content">
+            Paralex hover card effect
+        </div>
+      </div>
+      <div class="phce card card-2">
+        <div class="content">
+            Paralex hover card effect
+        </div>
+      </div>
+</body>
+</html>
